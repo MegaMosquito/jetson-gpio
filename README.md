@@ -73,7 +73,7 @@ PLEASE NOTE: The Jetson software preconfigures unchangeable pullup and pulldown 
   warnings.warn("Jetson.GPIO ignores setup()'s pull_up_down parameter")
 ```
 
-In my experience, neither high trigger nor low trigger is reliable on the Jetson GPIO pins! If you with to use Jetson GPIO pins for input (e.g., to connect a pushbutton) then  think you need to take control on the hardware side. That is, you need to configure either a pullup resistor (for low trigger) or pulldown resistor (for high trigger). The diagram below illustrates how to wire these pulling resistors for reliable input:
+In my experience, neither high trigger nor low trigger is reliable using the internal ulling resistors on the Jetson! Therefore, if you with to use Jetson GPIO pins for input (e.g., to connect a pushbutton) then I think you need to take control on the hardware side. That is, you need to configure either a **physical** pullup resistor (for low trigger) or a **physical** pulldown resistor (for high trigger). The diagram below illustrates how to wire these pulling resistors for reliable input on Jetsons:
 
 ![wiring-image](https://raw.githubusercontent.com/MegaMosquito/jetson-gpio/main/inputs.png)
 
