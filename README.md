@@ -73,7 +73,7 @@ PLEASE NOTE: The Jetson software preconfigures unchangeable pullup and pulldown 
   warnings.warn("Jetson.GPIO ignores setup()'s pull_up_down parameter")
 ```
 
-In my experience, neither high trigger nor low trigger is reliable using the internal ulling resistors on the Jetson! Therefore, if you with to use Jetson GPIO pins for input (e.g., to connect a pushbutton) then I think you need to take control on the hardware side. That is, you need to configure either a **physical** pullup resistor (for low trigger) or a **physical** pulldown resistor (for high trigger). The diagram below illustrates how to wire these pulling resistors for reliable input on Jetsons:
+In my experience, neither high trigger nor low trigger is reliable using the internal pulling resistors on the Jetson! Therefore, if you with to use Jetson GPIO pins for input (e.g., to connect a pushbutton) then I think you need to take control on the hardware side. That is, you need to configure either a **physical** pullup resistor (for low trigger) or a **physical** pulldown resistor (for high trigger). The diagram below illustrates how to wire these pulling resistors for reliable input on Jetsons:
 
 ![wiring-image](https://raw.githubusercontent.com/MegaMosquito/jetson-gpio/main/inputs.png)
 
@@ -81,7 +81,7 @@ Pulling resistors ensure that the GPIO is set to a particular value (HIGH or LOW
 
 Note that the 1K ohm resistor value I show in the diagram was [suggested by an NVIDIA engineer](https://forums.developer.nvidia.com/t/gpio-input-stuck-not-resetting/115752/30) and it seems to work well for me.
 
-Once the "mode" and "configure" APIs are complete (seeting the overall mode, and configuring the specific GPIO you have wired) then you can use either the "GET" or "POST" pin number APIs shown below. Note that GPIO pins are treated as purely digital so they will either show "true" or "false". The "POST" API accepts those literal values, but it will also accept "0" or "1" (representing "false" or "true", respectively).
+Once the "mode" and "configure" APIs are complete (setting the overall mode, and configuring the specific GPIO you have wired) then you can use either the "GET" or "POST" pin number APIs shown below. Note that GPIO pins are treated as purely digital so they will either show "true" or "false". The "POST" API accepts those literal values, but it will also accept "0" or "1" (representing "false" or "true", respectively).
 
 ## API Details
 
