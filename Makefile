@@ -1,3 +1,4 @@
+
 DOCKERHUB_ID:=ibmosquito
 NAME:=jetson-gpio
 VERSION:=1.0.0
@@ -10,11 +11,11 @@ build:
 
 dev: build stop
 	-docker rm -f $(NAME) 2> /dev/null || :
-	docker run -it --privileged --name $(NAME) -p $(PORT):$(PORT) -v /sys/class/gpio:/sys/class/gpio -v /sys/devices:/sys/devices -v /sys/class/pwm:/sys/class/pwm --device /dev/spidev0.0:/dev/spidev0.0:rw --device /dev/gpiochip0:/dev/gpiochip0 --device /dev/gpiochip1:/dev/gpiochip1 --volume `pwd`:/outside $(DOCKERHUB_ID)/$(NAME):$(VERSION) /bin/sh
+	docker run -it --privileged --name $(NAME) -p $(PORT):$(PORT) --volume `pwd`:/outside $(DOCKERHUB_ID)/$(NAME):$(VERSION) /bin/bash
 
 run: stop
 	-docker rm -f $(NAME) 2>/dev/null || :
-	docker run -d --privileged --name $(NAME) -p $(PORT):$(PORT) -v /sys/class/gpio:/sys/class/gpio -v /sys/devices:/sys/devices -v /sys/class/pwm:/sys/class/pwm --device /dev/spidev0.0:/dev/spidev0.0:rw $(DOCKERHUB_ID)/$(NAME):$(VERSION)
+	docker run -d --privileged --name $(NAME) -p $(PORT):$(PORT) $(DOCKERHUB_ID)/$(NAME):$(VERSION)
 
 test:
 	curl -X POST -sS localhost:$(PORT)/gpio/v1/mode/board

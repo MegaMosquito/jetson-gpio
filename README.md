@@ -58,15 +58,28 @@ Board pins may be numbered from 1 through 40, but many of those numbers are not 
     { 7, 11, 12, 13, 15, 16, 18, 19, 21, 22, 23, 24, 26, 29, 31, 32, 33, 35, 36, 37, 38, 40 }
 corresponding to these GPIO numbers respectively:
     { 216, 50, 79, 14, 194, 232, 15, 16, 17, 13, 18, 19, 20 , 149, 200, 168, 38, 76, 51, 12, 77, 78 }
-And note that some of the above may not be available for GPIO usage if you have configured them to be used for another prupose (e.g., for SPI or I2S).
+And note that some of the above may not be available for GPIO usage if you have configured them to be used for another purpose (e.g., for SPI or I2S).
 
 When you use the "configure" and GET/POST pin APIs, they will check to see if you are passing a valid GPIO or board pin number and return an error if you are not.
 
 ## Pin Configuration
 
-After you have set the overall mode, you must use the "configure" API to configure the pins you wish to use (i.e., configure them for input or output use). If you are configuring for input, you can specify a pull-up or pull-down resistor. If none is specified, then pullup will be automatically used.
+After you have set the overall mode, you must use the "configure" API to configure the pins you wish to use (i.e., configure them for input or output use). If you are configuring for input, you can specify a pull-up or pull-down resistor. If none is specified, then pullup will be automatically selected.
 
-PLEASE NOTE: The Jetson software preconfigures various pullup and pulldown resistors for the various GPIO pins. This is **configurable but only at the point the module is flashed**. You must nevertheless call this "configure" API to specify pullup or pulldown for any GPIOs you use for input. The API is expected to return an error if the value you specify is not the existing configuration of the module. That is, calling this API acts as a validity check for your pullup/pulldown assumptions for the pin.
+PLEASE NOTE: The Jetson software preconfigures unchangeable pullup and pulldown resistors for the various GPIO pins. This is **user configurable only at the point the module is flashed**. For symmetry with my Raspberry Pi GPIO REST service, You must call this "configure" API to specify pullup or pulldown for any GPIOs you use for input. The underlying Jetson software also accepts this argument, but simply ignores and emits a message like this:
+
+```
+/usr/local/lib/python3.8/dist-packages/Jetson/GPIO/gpio.py:370: UserWarning: Jetson.GPIO ignores setup()'s pull_up_down parameter
+  warnings.warn("Jetson.GPIO ignores setup()'s pull_up_down parameter")
+```
+
+In my experience, neither high trigger nor low trigger is reliable on the Jetson GPIO pins! If you with to use Jetson GPIO pins for input (e.g., to connect a pushbutton) then  think you need to take control on the hardware side. That is, you need to configure either a pullup resistor (for low trigger) or pulldown resistor (for high trigger). The diagram below illustrates how to wire these pulling resistors for reliable input:
+
+![wiring-image](https://raw.githubusercontent.com/MegaMosquito/jetson-gpio/main/inputs.png)
+
+Pulling resistors ensure that the GPIO is set to a particular value (HIGH or LOW) when the button is **not** pressed, then when it is pressed the other value is set. This is a common practice in electronics and on many microcontrollers an internal resistor can be configured in software to pull in the right direction, but this seems to not work on the Jetsons.
+
+Note that the 1K ohm resistor value I show in the diagram was [suggested by an NVIDIA engineer](https://forums.developer.nvidia.com/t/gpio-input-stuck-not-resetting/115752/30) and it seems to work well for me.
 
 Once the "mode" and "configure" APIs are complete (seeting the overall mode, and configuring the specific GPIO you have wired) then you can use either the "GET" or "POST" pin number APIs shown below. Note that GPIO pins are treated as purely digital so they will either show "true" or "false". The "POST" API accepts those literal values, but it will also accept "0" or "1" (representing "false" or "true", respectively).
 
