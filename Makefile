@@ -18,15 +18,7 @@ run: stop
 	docker run -d --privileged --name $(NAME) -p $(PORT):$(PORT) $(DOCKERHUB_ID)/$(NAME):$(VERSION)
 
 test:
-	curl -X POST -sS localhost:$(PORT)/gpio/v1/mode/board
-	curl -X POST -sS localhost:$(PORT)/gpio/v1/configure/40/out
-	curl -X POST -sS localhost:$(PORT)/gpio/v1/40/1
-	sleep 1
-	curl -X POST -sS localhost:$(PORT)/gpio/v1/40/0
-	sleep 1
-	curl -X POST -sS localhost:$(PORT)/gpio/v1/40/1
-	sleep 1
-	curl -X POST -sS localhost:$(PORT)/gpio/v1/40/0
+	./test.sh
 
 exec:
 	docker exec -it $(NAME) /bin/sh
